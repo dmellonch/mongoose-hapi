@@ -1,4 +1,8 @@
 const Hapi = require('hapi');
+const mongoose = require('mongoose');
+const Schema = require('mongoose').Schema;
+const ObjectId = Schema.ObjectId;
+require('./boot/db');
 
 // Create a server with a host and port
 const server = new Hapi.Server();
@@ -7,31 +11,40 @@ server.connection({
   port: 3000
 });
 
-// Add the route
-server.route({
-  method: 'GET',
-  path:'/hello',
-  handler: function (request, reply) {
-    return reply('hello world');
+
+const Inert = require('inert');
+const Vision = require('vision');
+const HapiSwagger = require('hapi-swagger');
+const Package = require('./package.json');
+const options = {
+  info: {
+    'title': 'Test API Documentation',
+    'version': Package.version,
+  },
+  grouping: 'tags'
+};
+
+server.register([
+  Inert,
+  Vision,
+  {
+    'register': HapiSwagger,
+    'options': options
   }
+], (err) => {
+  server.start((err) => {
+    if (err) {
+      console.log(err);
+    }
+    else {
+      console.log('Server running at:', server.info.uri);
+    }
+  });
+
+  require('./boot/db');
+  require('./boot/route')(server);
+  require('./middleware')(server);
 });
 
-// Start the server
-server.start((err) => {
-  if (err) {
-    throw err;
-  }
-  console.log('Server running at:', server.info.uri);
-});
 
-
-var mongoose = require('mongoose');
-mongoose.connect('http://localhost:27010/appTest');
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-
-db.once('open', function(err) {
-  console.log(err)
-  // we're connected!
-});
 

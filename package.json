@@ -1,11 +1,16 @@
 {
   "name": "mongoose-hapi",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Test project",
   "main": "server.js",
   "dependencies": {
+    "glob": "^7.1.2",
     "hapi": "^16.5.0",
-    "mongoose": "^4.11.5"
+    "hapi-swagger": "^7.7.0",
+    "inert": "^4.2.1",
+    "joi": "^10.6.0",
+    "mongoose": "^4.11.5",
+    "vision": "^4.1.1"
   },
   "devDependencies": {},
   "scripts": {
