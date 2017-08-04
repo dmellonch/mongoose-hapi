@@ -1,9 +1,9 @@
 'use strict';
-const Mongoose = require('mongoose').Mongoose;
+const mongoose = require('mongoose');
 const glob = require('glob');
 const Joi = require('Joi');
 const f = require('util').format;
-const dbURI = 'mongodb://localhost/mongose-hapi';
+const dbURI = 'mongodb://localhost/';
 
 function _createStandardApi(model, pluralName, disabled) {
 
@@ -21,12 +21,21 @@ function _createStandardApi(model, pluralName, disabled) {
       path: apiRoot + '/{id}',
       config: {
         handler: (request, reply) => {
-          model.findById(request.params.id, (error, doc) => {
-            if (error) {
-              console.error(error);
-            }
-            reply(doc);
-          });
+
+          mongoose.connect(dbURI + request.info.hostname, {useMongoClient: true}).then(
+            () => {
+              model.findById(request.params.id, (error, doc) => {
+                if (error) {
+                  console.error(error);
+                }
+                reply(doc);
+              });
+              /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
+            },
+            err => { /** handle initial connection error */ }
+          );
+
+
         },
         description: f('Get %s by id', singularName),
         notes: f('Returns a %s', singularName),

@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 const dbURI = 'mongodb://localhost/mongose-hapi';
 
+
+require('../models/author').model;
+require('../models/book').model;
+
+
+
 mongoose.connect(dbURI, {useMongoClient: true});
 
 mongoose
@@ -19,7 +25,3 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
-
-require('../models/author').model;
-require('../models/book').model;
-
